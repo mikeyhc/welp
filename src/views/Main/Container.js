@@ -3,6 +3,8 @@ import Map,{GoogleApiWrapper} from 'google-maps-react'
 import {searchNearby} from 'utils/googleApiHelpers'
 import Header from 'components/Header/Header'
 import Sidebar from 'components/Sidebar/Sidebar'
+import Listing from 'components/Listing/Listing'
+import MapComponent from 'views/Main/Map/Map'
 
 import styles from './styles.module.css'
 
@@ -34,7 +36,24 @@ export class Container extends React.Component {
             });
     }
 
+                  // <div className={styles.content}>
+                  //   {this.state.places.map(place => {
+                  //     return (<div key={place.id}>{place.name}</div>)
+                  //   })}
+                  // </div>
     render() {
+        let children = null;
+        if(this.props.children) {
+            children = React.cloneElement(
+                    this.props.children,
+                    {
+                        google: this.props.google,
+                        places: this.state.places,
+                        loaded: this.props.loaded
+                    });
+        } else {
+            console.log("no child provided as prop");
+        }
         return(
             <div>
                 Hello from the Container
@@ -49,9 +68,7 @@ export class Container extends React.Component {
                     places={this.state.places}
                     />
                   <div className={styles.content}>
-                    {this.state.places.map(place => {
-                      return (<div key={place.id}>{place.name}</div>)
-                    })}
+                    <MapComponent places={this.state.places} google={this.props.google}></MapComponent>
                   </div>
                 </Map>
             </div>);
