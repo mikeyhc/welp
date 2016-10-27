@@ -36,11 +36,18 @@ export class Container extends React.Component {
             });
     }
 
+    onMarkerClick(item) {
+        const {place} = item;
+        const {push} = this.context.router;
+        push(`/detail/${place.place_id}`)
+    }
+
                   // <div className={styles.content}>
                   //   {this.state.places.map(place => {
                   //     return (<div key={place.id}>{place.name}</div>)
                   //   })}
                   // </div>
+                    // <MapComponent {... children}>{children}</MapComponent>
     render() {
         let children = null;
         if(this.props.children) {
@@ -49,9 +56,16 @@ export class Container extends React.Component {
                     {
                         google: this.props.google,
                         places: this.state.places,
-                        loaded: this.props.loaded
+                        loaded: this.props.loaded,
+                        onMarkerClick: this.onMarkerClick.bind(this)
                     });
         } else {
+            children = {
+                google: this.props.google,
+                places: this.state.places,
+                loaded: this.props.loaded,
+                onMarkerClick: this.onMarkerClick.bind(this)
+            };
             console.log("no child provided as prop");
         }
         return(
@@ -67,13 +81,17 @@ export class Container extends React.Component {
                     title={'Restaurants'}
                     places={this.state.places}
                     />
-                  <div className={styles.content}>
-                    <MapComponent places={this.state.places} google={this.props.google}></MapComponent>
+                  <div className={styles.content}>{children}
                   </div>
                 </Map>
             </div>);
     }
 }
+
+Container.contextTypes = {
+    router: React.PropTypes.object
+}
+
 
 export default GoogleApiWrapper({
     apiKey: __GAPI_KEY__
